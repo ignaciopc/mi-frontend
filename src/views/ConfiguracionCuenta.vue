@@ -154,6 +154,7 @@ async function actualizarCuenta() {
 
 function cerrarSesion() {
   localStorage.removeItem('token')
+  localStorage.removeItem('token')
   router.push('/session')
 }
 
