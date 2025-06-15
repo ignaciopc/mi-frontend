@@ -14,6 +14,14 @@ import { GeoSearchControl, OpenStreetMapProvider } from 'leaflet-geosearch';
 import 'leaflet-geosearch/dist/geosearch.css';
 import axios from 'axios';
 
+// Aquí hacemos la corrección para que Leaflet encuentre los iconos correctamente
+delete L.Icon.Default.prototype._getIconUrl;
+L.Icon.Default.mergeOptions({
+  iconRetinaUrl: new URL('leaflet/dist/images/marker-icon-2x.png', import.meta.url).href,
+  iconUrl: new URL('leaflet/dist/images/marker-icon.png', import.meta.url).href,
+  shadowUrl: new URL('leaflet/dist/images/marker-shadow.png', import.meta.url).href,
+});
+
 export default {
   name: 'MapaInteractivo',
   setup() {
