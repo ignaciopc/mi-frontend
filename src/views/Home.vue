@@ -32,18 +32,21 @@
     </div>
 
     <div class="button-row">
-      <button @click="$router.push('/fincas/mapa')">+ Ver mapa</button>
-      <button @click="$router.push('/finanzas/resumen')">Gastos por Finca</button>
-      <button @click="$router.push('/tareas/lista')">Ver tareas</button>
-      <button @click="$router.push('/documentos/generar')">Generar informe</button>
+      <button @click="goTo('/fincas/mapa')">+ Ver mapa</button>
+      <button @click="goTo('/finanzas/resumen')">Gastos por Finca</button>
+      <button @click="goTo('/tareas/lista')">Ver tareas</button>
+      <button @click="goTo('/documentos/generar')">Generar informe</button>
     </div>
   </div>
 </template>
 
 <script setup>
 import { ref, onMounted } from 'vue'
+import { useRouter } from 'vue-router'
 import EarningsChart from '../components/EarningsChart.vue'
 import Map from '../components/Map.vue'
+
+const router = useRouter()
 
 const totalFincas = ref(0)
 const produccionEsperada = ref(0)
@@ -91,6 +94,10 @@ const formatCurrency = (value) => {
     style: 'currency',
     currency: 'EUR'
   }).format(value)
+}
+
+function goTo(path) {
+  router.push(path)
 }
 
 onMounted(fetchDashboardData)

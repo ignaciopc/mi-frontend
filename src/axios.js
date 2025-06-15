@@ -4,12 +4,13 @@ import router from './router'; // Importamos el router para redirección
 
 // Configuración base de Axios
 const instance = axios.create({
-  baseURL: 'http://localhost:3000/api',  // Dirección base del servidor
+  baseURL: import.meta.env.VITE_API_URL + '/api',
   timeout: 10000,
   headers: {
     'Content-Type': 'application/json',
   },
 });
+
 
 // Interceptor de respuestas para manejar errores de autenticación
 instance.interceptors.response.use(

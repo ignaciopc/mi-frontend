@@ -32,7 +32,6 @@
                 <router-link
                   :to="`/fincas/detalles/${finca.finca_id}`"
                   class="btn btn-primary btn-sm"
-                  target="_blank"
                 >
                   Saber más
                 </router-link>
@@ -58,7 +57,6 @@ export default {
       resumen: [],
       loading: false,
       error: null,
-      detalleVisible: null,
     }
   },
   methods: {
@@ -140,7 +138,7 @@ export default {
     color: #495057;
   }
 
-  /* 🔽 Oculta solo el label "Detalles" en móviles */
+  /* Oculta solo el label "Detalles" en móviles */
   .resumen-table td[data-label="Detalles"]::before {
     display: none;
   }
@@ -152,5 +150,4 @@ export default {
     margin-top: 6px;
   }
 }
-
 </style>

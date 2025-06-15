@@ -4,16 +4,27 @@
       <template v-if="isAuthenticated">
         <router-link class="navbar-brand fw-bold" to="/home">Inicio</router-link>
 
-        <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNavDropdown">
+        <button
+          class="navbar-toggler"
+          type="button"
+          data-bs-toggle="collapse"
+          data-bs-target="#navbarNavDropdown"
+        >
           <span class="navbar-toggler-icon"></span>
         </button>
 
         <div class="collapse navbar-collapse justify-content-center" id="navbarNavDropdown">
           <ul class="navbar-nav gap-2">
-            <!-- Todo tu menú para usuarios autenticados aquí -->
             <!-- Fincas -->
             <li class="nav-item dropdown">
-              <a class="nav-link dropdown-toggle" href="#" data-bs-toggle="dropdown">Fincas</a>
+              <button
+                class="nav-link dropdown-toggle btn btn-link"
+                type="button"
+                data-bs-toggle="dropdown"
+                aria-expanded="false"
+              >
+                Fincas
+              </button>
               <ul class="dropdown-menu">
                 <li><router-link to="/fincas/lista" class="dropdown-item">Lista de Fincas</router-link></li>
                 <li><router-link to="/fincas/mapa" class="dropdown-item">Mapa Interactivo</router-link></li>
@@ -24,7 +35,14 @@
 
             <!-- Tareas -->
             <li class="nav-item dropdown">
-              <a class="nav-link dropdown-toggle" href="#" data-bs-toggle="dropdown">Tareas y Proyectos</a>
+              <button
+                class="nav-link dropdown-toggle btn btn-link"
+                type="button"
+                data-bs-toggle="dropdown"
+                aria-expanded="false"
+              >
+                Tareas y Proyectos
+              </button>
               <ul class="dropdown-menu">
                 <li><router-link to="/tareas/lista" class="dropdown-item">Lista de Tareas</router-link></li>
                 <li><router-link to="/tareas/calendario" class="dropdown-item">Calendario de Actividades</router-link></li>
@@ -33,7 +51,14 @@
 
             <!-- Finanzas -->
             <li class="nav-item dropdown" v-if="usuarioActual?.rol !== 'trabajador'">
-              <a class="nav-link dropdown-toggle" href="#" data-bs-toggle="dropdown">Finanzas</a>
+              <button
+                class="nav-link dropdown-toggle btn btn-link"
+                type="button"
+                data-bs-toggle="dropdown"
+                aria-expanded="false"
+              >
+                Finanzas
+              </button>
               <ul class="dropdown-menu">
                 <li><router-link to="/finanzas/resumen" class="dropdown-item">Resumen de Finanzas</router-link></li>
                 <li v-if="usuarioActual?.rol !== 'trabajador'"><router-link to="/finanzas/informe-financiero" class="dropdown-item">Informe Financiero</router-link></li>
@@ -42,7 +67,14 @@
 
             <!-- Usuarios -->
             <li class="nav-item dropdown" v-if="usuarioActual?.rol !== 'trabajador'">
-              <a class="nav-link dropdown-toggle" href="#" data-bs-toggle="dropdown">Usuarios y Roles</a>
+              <button
+                class="nav-link dropdown-toggle btn btn-link"
+                type="button"
+                data-bs-toggle="dropdown"
+                aria-expanded="false"
+              >
+                Usuarios y Roles
+              </button>
               <ul class="dropdown-menu">
                 <li><router-link to="/usuarios/lista" class="dropdown-item">Lista de Usuarios</router-link></li>
                 <li><router-link to="/usuarios/roles" class="dropdown-item">Creacion de trabajadores</router-link></li>
@@ -51,7 +83,14 @@
 
             <!-- Documentos -->
             <li v-if="usuarioActual?.rol !== 'trabajador'" class="nav-item dropdown">
-              <a class="nav-link dropdown-toggle" href="#" data-bs-toggle="dropdown">Documentos</a>
+              <button
+                class="nav-link dropdown-toggle btn btn-link"
+                type="button"
+                data-bs-toggle="dropdown"
+                aria-expanded="false"
+              >
+                Documentos
+              </button>
               <ul class="dropdown-menu">
                 <li><router-link to="/documentos/generar" class="dropdown-item">Gestión de Documentos</router-link></li>
                 <li><router-link to="/documentos/vencimientos" class="dropdown-item">Control de Vencimientos</router-link></li>
@@ -76,7 +115,6 @@
     </div>
   </header>
 </template>
-
 
 <script setup>
 import { ref, onMounted, watch } from 'vue'
@@ -121,12 +159,10 @@ async function actualizarHeader() {
   }
 }
 
-// Carga inicial al montar el componente
 onMounted(() => {
   actualizarHeader()
 })
 
-// Observa el cambio de ruta para actualizar el header
 watch(route, () => {
   actualizarHeader()
 })

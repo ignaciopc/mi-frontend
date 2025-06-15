@@ -7,8 +7,7 @@
         <!-- Campo de nombre de usuario -->
         <div class="input-group">
           <label for="username">Nombre de usuario</label>
-          <input type="text" id="username" v-model="form.username" placeholder="Ingresa tu nombre de usuario"
-            required />
+          <input type="text" id="username" v-model="form.username" placeholder="Ingresa tu nombre de usuario" required />
         </div>
 
         <!-- Campo de correo electrónico -->
@@ -19,8 +18,7 @@
         <!-- Campo de teléfono -->
         <div class="input-group">
           <label for="telefono">Teléfono</label>
-          <input type="tel" id="telefono" v-model="form.telefono" placeholder="Ingresa tu número de teléfono"
-            required />
+          <input type="tel" id="telefono" v-model="form.telefono" placeholder="Ingresa tu número de teléfono" required />
         </div>
 
         <!-- Campo de contraseña -->
@@ -32,13 +30,11 @@
         <!-- Campo de confirmación de contraseña -->
         <div class="input-group">
           <label for="confirmPassword">Confirmar contraseña</label>
-          <input type="password" id="confirmPassword" v-model="form.confirmPassword"
-            placeholder="Confirma tu contraseña" required />
+          <input type="password" id="confirmPassword" v-model="form.confirmPassword" placeholder="Confirma tu contraseña" required />
         </div>
 
         <!-- Botón de registro -->
         <button type="submit" class="submit-btn">Registrarse</button>
-
       </form>
 
       <!-- Mensajes de error o éxito -->
@@ -49,7 +45,6 @@
       <p class="login-link">
         ¿Ya tienes una cuenta? <router-link to="/session">Iniciar sesión</router-link>
       </p>
-
     </div>
   </div>
 </template>
@@ -107,7 +102,6 @@ export default {
   }
 };
 </script>
-
 
 <style scoped>
 /* Estilos generales */

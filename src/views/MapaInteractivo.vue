@@ -19,6 +19,7 @@ export default {
   setup() {
     const router = useRouter();
     const mapRef = ref(null);
+    const API_URL = import.meta.env.VITE_API_URL || 'http://localhost:3000';
 
     const centrarUbicacion = () => {
       if (!mapRef.value) return;
@@ -76,7 +77,7 @@ export default {
       }
 
       try {
-        const response = await axios.get('http://localhost:3000/api/fincas/lista', {
+        const response = await axios.get(`${API_URL}/api/fincas/lista`, {
           headers: {
             Authorization: `Bearer ${token}`
           }

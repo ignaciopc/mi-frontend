@@ -61,9 +61,10 @@ import axios from 'axios';
 
 const tareas = ref([]);
 const tareasPorFinca = ref({});
-const fincas = ref([]);
 const loading = ref(false);
 const error = ref(null);
+
+const API_URL = import.meta.env.VITE_API_URL || 'http://localhost:3000';
 
 const nuevaTarea = ref({
   titulo: '',
@@ -78,7 +79,7 @@ const fetchTareas = async () => {
   error.value = null;
 
   try {
-    const response = await axios.get('/api/fincas/tareas-multiples', {
+    const response = await axios.get(`${API_URL}/api/fincas/tareas-multiples`, {
       headers: {
         Authorization: `Bearer ${localStorage.getItem('token')}`,
       },
@@ -92,8 +93,6 @@ const fetchTareas = async () => {
       acc[finca].push(tarea);
       return acc;
     }, {});
-
-    fincas.value = [...new Set(tareas.value.map(t => t.finca_nombre))];
   } catch (err) {
     error.value = 'No se pudieron cargar las tareas';
     console.error(err);
@@ -120,7 +119,7 @@ const guardarTareas = async () => {
 
   try {
     await axios.post(
-      '/api/fincas/tareas-multiples/guardar',
+      `${API_URL}/api/fincas/tareas-multiples/guardar`,
       { tareas: tareasPlanas },
       {
         headers: { Authorization: `Bearer ${localStorage.getItem('token')}` },

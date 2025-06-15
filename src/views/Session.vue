@@ -22,8 +22,11 @@
 
       <!-- Enlace a la página de registro -->
       <p class="login-link">
-        ¿No tienes una cuenta? <a href="/register">Regístrate</a>
+        ¿No tienes una cuenta? <router-link to="/register">Regístrate</router-link>
       </p>
+      
+      <!-- Mostrar mensaje de error si existe -->
+      <div v-if="errorMessage" class="error-message">{{ errorMessage }}</div>
     </article>
   </section>
 </template>
@@ -141,5 +144,12 @@ input:focus {
 
 .login-link a:hover {
   text-decoration: underline;
+}
+
+.error-message {
+  color: red;
+  font-size: 14px;
+  margin-top: 10px;
+  text-align: center;
 }
 </style>

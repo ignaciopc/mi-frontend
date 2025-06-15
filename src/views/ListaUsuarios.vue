@@ -46,6 +46,8 @@
 <script>
 import axios from 'axios'
 
+const API_URL = import.meta.env.VITE_API_URL || 'http://localhost:3000'
+
 export default {
   data() {
     return {
@@ -60,7 +62,7 @@ export default {
       this.error = null
       try {
         const token = localStorage.getItem('token')
-        const response = await axios.get('/api/usuarios/subordinados', {
+        const response = await axios.get(`${API_URL}/api/usuarios/subordinados`, {
           headers: { Authorization: `Bearer ${token}` },
         })
         this.subordinados = response.data.subordinados || []
@@ -74,7 +76,7 @@ export default {
     async eliminarUsuario(id) {
       try {
         const token = localStorage.getItem('token')
-        await axios.delete(`/api/usuarios/${id}`, {
+        await axios.delete(`${API_URL}/api/usuarios/${id}`, {
           headers: { Authorization: `Bearer ${token}` },
         })
         this.subordinados = this.subordinados.filter(u => u.id !== id)
