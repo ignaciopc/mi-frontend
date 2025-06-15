@@ -159,7 +159,12 @@ onMounted(async () => {
 }
 
 .btn-centrar {
-  position: absolute;
+  position: fixed;
+  /* para que quede fijo y visible */
+  bottom: 15px;
+  /* distancia desde abajo */
+  left: 15px;
+  /* distancia desde la izquierda */
   z-index: 1000;
   background-color: #3498db;
   color: white;
@@ -175,26 +180,5 @@ onMounted(async () => {
 /* Hover */
 .btn-centrar:hover {
   background-color: #2980b9;
-}
-
-/* Responsive: abajo a la derecha en móviles */
-/* 📱 Móviles: esquina inferior izquierda */
-@media (max-width: 768px) {
-  .btn-centrar {
-    bottom: 15px;
-    left: 15px;
-    top: auto;
-    right: auto;
-  }
-}
-
-/* 🖥️ Escritorio: esquina superior derecha */
-@media (min-width: 769px) {
-  .btn-centrar {
-    top: 15px;
-    right: 15px;
-    bottom: auto;
-    left: auto;
-  }
 }
 </style>
