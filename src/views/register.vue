@@ -47,8 +47,9 @@
 
       <!-- Enlace a la página de login -->
       <p class="login-link">
-        ¿Ya tienes una cuenta? <a href="/session">Iniciar sesión</a>
+        ¿Ya tienes una cuenta? <router-link to="/session">Iniciar sesión</router-link>
       </p>
+
     </div>
   </div>
 </template>
