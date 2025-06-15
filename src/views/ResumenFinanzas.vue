@@ -29,10 +29,7 @@
                 {{ formatCurrency((finca.dinero_ganado ?? 0) - (finca.total_gastos ?? 0)) }}
               </td>
               <td data-label="Detalles">
-                <router-link
-                  :to="`/fincas/detalles/${finca.finca_id}`"
-                  class="btn btn-primary btn-sm"
-                >
+                <router-link :to="`/fincas/detalles/${finca.finca_id}`" class="btn btn-primary btn-sm">
                   Saber más
                 </router-link>
               </td>
@@ -65,9 +62,11 @@ export default {
       this.error = null
       try {
         const token = localStorage.getItem('token')
-        const response = await axios.get('/api/gastos/resumen', {
+        const API_URL = import.meta.env.VITE_API_URL || 'http://localhost:3000';
+
+        const response = await axios.get(`${API_URL}/api/gastos/resumen`, {
           headers: { Authorization: `Bearer ${token}` },
-        })
+        });
         this.resumen = response.data.resumen || []
       } catch (err) {
         this.error = 'Error cargando el resumen de gastos.'
