@@ -38,7 +38,7 @@
         </div>
       </div>
 
-      <p v-else class="text-center fs-5 mt-4">No tienes usuarios subordinados.</p>
+      <p v-else class="text-center fs-5 mt-4">No tienes usuarios trabajadores.</p>
     </div>
   </div>
 </template>
@@ -67,7 +67,7 @@ export default {
         })
         this.subordinados = response.data.subordinados || []
       } catch (err) {
-        this.error = 'Error cargando usuarios subordinados.'
+        this.error = 'Error cargando usuarios trabajadores.'
         console.error(err)
       } finally {
         this.loading = false

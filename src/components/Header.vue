@@ -120,6 +120,8 @@
 import { ref, onMounted, watch } from 'vue'
 import { useRoute } from 'vue-router'
 
+const API_URL = import.meta.env.VITE_API_URL || 'http://localhost:3000'
+
 const isAuthenticated = ref(false)
 const usuarioActual = ref(null)
 const route = useRoute()
@@ -137,7 +139,7 @@ async function fetchUsuarioActual() {
   }
 
   try {
-    const res = await fetch('http://localhost:3000/api/usuarios/me', {
+    const res = await fetch(`${API_URL}/api/usuarios/me`, {
       headers: {
         Authorization: `Bearer ${token}`
       }
@@ -167,3 +169,4 @@ watch(route, () => {
   actualizarHeader()
 })
 </script>
+
