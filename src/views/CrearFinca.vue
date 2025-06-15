@@ -1,5 +1,5 @@
 <template>
-  <div class="form-container" style="position: relative;">
+  <div class="form-container">
     <h2>Registrar Nueva Finca</h2>
 
     <form @submit.prevent="guardarFinca" class="finca-form">
@@ -12,16 +12,10 @@
       <label>Tamaño (ha):</label>
       <input type="number" step="0.1" v-model="tamano" required />
 
-      <button type="button" @click="toggleDraw" class="btn-draw">
-        {{ drawing ? 'Cancelar Dibujo' : 'Activar Dibujo' }}
-      </button>
-
       <div id="map" class="map-responsive"></div>
 
       <button type="submit">Guardar Finca</button>
     </form>
-
-    <button class="btn-centro-movil" @click="centrarUbicacion">📍 Mi ubicación</button>
   </div>
 </template>
 
@@ -39,27 +33,20 @@ export default {
       nombre: '',
       tipoCultivo: '',
       tamano: null,
-      drawing: false,
       polygonCoords: null,
-      map: null,
-      drawControl: null,
-      drawnItems: null,
     };
   },
   mounted() {
-    this.map = L.map('map').setView([40, -3], 13);
+    const map = L.map('map').setView([40, -3], 13);
 
-    L.tileLayer(
-      'https://server.arcgisonline.com/ArcGIS/rest/services/World_Imagery/MapServer/tile/{z}/{y}/{x}',
-      {
-        attribution: 'Tiles © Esri',
-      }
-    ).addTo(this.map);
+    L.tileLayer('https://server.arcgisonline.com/ArcGIS/rest/services/World_Imagery/MapServer/tile/{z}/{y}/{x}', {
+      attribution: 'Tiles © Esri',
+    }).addTo(map);
 
-    this.drawnItems = new L.FeatureGroup();
-    this.map.addLayer(this.drawnItems);
+    const drawnItems = new L.FeatureGroup();
+    map.addLayer(drawnItems);
 
-    this.drawControl = new L.Control.Draw({
+    const drawControl = new L.Control.Draw({
       draw: {
         polygon: true,
         marker: false,
@@ -69,22 +56,19 @@ export default {
         circlemarker: false,
       },
       edit: {
-        featureGroup: this.drawnItems,
+        featureGroup: drawnItems,
       },
     });
 
-    // Control no añadido aún, solo cuando se active dibujo
+    map.addControl(drawControl);
 
-    this.map.on(L.Draw.Event.CREATED, (e) => {
+    map.on(L.Draw.Event.CREATED, (e) => {
       const layer = e.layer;
-      this.drawnItems.clearLayers();
-      this.drawnItems.addLayer(layer);
+      drawnItems.clearLayers();
+      drawnItems.addLayer(layer);
       this.polygonCoords = layer.getLatLngs()[0];
-      this.drawing = false;
-      this.map.removeControl(this.drawControl);
     });
 
-    // Buscador
     const provider = new OpenStreetMapProvider();
     const searchControl = new GeoSearchControl({
       provider,
@@ -97,46 +81,21 @@ export default {
       animateZoom: true,
     });
 
-    this.map.addControl(searchControl);
+    map.addControl(searchControl);
 
+    // Fix de tamaño en móviles
     setTimeout(() => {
-      this.map.invalidateSize();
+      map.invalidateSize();
     }, 500);
   },
   methods: {
-    toggleDraw() {
-      if (this.drawing) {
-        // Cancelar dibujo
-        this.drawing = false;
-        this.map.removeControl(this.drawControl);
-        this.drawnItems.clearLayers();
-        this.polygonCoords = null;
-      } else {
-        // Activar dibujo
-        this.drawing = true;
-        this.map.addControl(this.drawControl);
-      }
-    },
-    centrarUbicacion() {
-      if (!this.map) return;
-      if (navigator.geolocation) {
-        navigator.geolocation.getCurrentPosition(
-          (pos) => {
-            this.map.setView([pos.coords.latitude, pos.coords.longitude], 16);
-          },
-          () => alert('No se pudo obtener la ubicación.')
-        );
-      } else {
-        alert('Geolocalización no disponible.');
-      }
-    },
     guardarFinca() {
       if (!this.polygonCoords) {
-        alert('Dibuja la finca en el mapa antes de guardar.');
+        alert('Dibuja la finca en el mapa.');
         return;
       }
 
-      const coordinates = this.polygonCoords.map((coord) => [coord.lng, coord.lat]);
+      const coordinates = this.polygonCoords.map(coord => [coord.lng, coord.lat]);
       coordinates.push([this.polygonCoords[0].lng, this.polygonCoords[0].lat]);
 
       const geojson = {
@@ -172,15 +131,13 @@ export default {
           this.nombre = '';
           this.tipoCultivo = '';
           this.tamano = null;
-          this.drawnItems.clearLayers();
-          this.polygonCoords = null;
         })
-        .catch((err) => {
+        .catch(err => {
           console.error('Error al guardar finca:', err);
           const errorMessage = err.response?.data?.message || 'Error desconocido';
           alert('Error al guardar finca: ' + errorMessage);
         });
-    },
+    }
   },
 };
 </script>
@@ -193,7 +150,6 @@ export default {
   background: #f4f4f4;
   border-radius: 10px;
   box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
-  position: relative;
 }
 
 .finca-form {
@@ -237,39 +193,6 @@ button:hover {
   border-radius: 8px;
   overflow: hidden;
   box-shadow: 0 0 5px rgba(0, 0, 0, 0.15);
-}
-
-/* Botón para activar dibujo */
-.btn-draw {
-  margin-top: 10px;
-  background-color: #3e7c2d;
-  color: white;
-  padding: 10px 16px;
-  border: none;
-  border-radius: 6px;
-  cursor: pointer;
-  font-size: 16px;
-  width: 100%;
-}
-
-.btn-draw:hover {
-  background-color: #2b5b1e;
-}
-
-/* Botón centrar ubicación en móvil */
-.btn-centro-movil {
-  position: absolute;
-  bottom: 15px;
-  left: 15px;
-  z-index: 1000;
-  background-color: #3e7c2d;
-  color: white;
-  padding: 10px 14px;
-  border-radius: 8px;
-  border: none;
-  font-size: 16px;
-  cursor: pointer;
-  box-shadow: 0 2px 6px rgba(0,0,0,0.3);
 }
 
 /* Responsive */
