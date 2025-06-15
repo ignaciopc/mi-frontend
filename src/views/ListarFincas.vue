@@ -55,6 +55,8 @@
 <script>
 import axios from 'axios'
 
+const baseURL = import.meta.env.VITE_API_URL || 'http://localhost:3000'
+
 export default {
   data() {
     return {
@@ -77,7 +79,7 @@ export default {
 
       try {
         const token = localStorage.getItem('token')
-        await axios.delete(`http://localhost:3000/api/fincas/${id}`, {
+        await axios.delete(`${baseURL}/api/fincas/${id}`, {
           headers: { Authorization: `Bearer ${token}` }
         })
         this.fincas = this.fincas.filter(f => f.id !== id)
@@ -92,12 +94,12 @@ export default {
     try {
       const token = localStorage.getItem('token')
 
-      const response = await axios.get('http://localhost:3000/api/fincas/lista', {
+      const response = await axios.get(`${baseURL}/api/fincas/lista`, {
         headers: { Authorization: `Bearer ${token}` }
       })
       this.fincas = response.data.fincas
 
-      const userResponse = await axios.get('http://localhost:3000/api/usuarios/me', {
+      const userResponse = await axios.get(`${baseURL}/api/usuarios/me`, {
         headers: { Authorization: `Bearer ${token}` }
       })
       this.rol = userResponse.data.rol

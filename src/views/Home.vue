@@ -46,6 +46,8 @@ import { useRouter } from 'vue-router'
 import EarningsChart from '../components/EarningsChart.vue'
 import Map from '../components/Map.vue'
 
+const baseURL = import.meta.env.VITE_API_URL || 'http://localhost:3000'
+
 const router = useRouter()
 
 const totalFincas = ref(0)
@@ -60,16 +62,16 @@ const fetchDashboardData = async () => {
   const headers = { Authorization: `Bearer ${token}` }
 
   try {
-    const countRes = await fetch('http://localhost:3000/api/fincas/count', { headers })
+    const countRes = await fetch(`${baseURL}/api/fincas/count`, { headers })
     const countData = await countRes.json()
     totalFincas.value = countData.totalFincas || 0
 
-    const tareasRes = await fetch('http://localhost:3000/api/fincas/tareas-multiples', { headers })
+    const tareasRes = await fetch(`${baseURL}/api/fincas/tareas-multiples`, { headers })
     const tareasData = await tareasRes.json()
     tareas.value = tareasData.tareas || []
     tareasPendientes.value = tareas.value.filter(t => !t.completada).length
 
-    const resumenRes = await fetch('http://localhost:3000/api/gastos/resumen', { headers })
+    const resumenRes = await fetch(`${baseURL}/api/gastos/resumen`, { headers })
     const resumenData = await resumenRes.json()
 
     if (resumenData?.resumen?.length) {

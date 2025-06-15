@@ -299,16 +299,16 @@
       </div>
     </div>
   </template>
-
 <script setup>
-import { ref, onMounted } from 'vue'
+import { ref, onMounted, computed } from 'vue'
 import { useRoute } from 'vue-router'
+
+const baseURL = import.meta.env.VITE_API_URL || 'http://localhost:3000'
 
 const finca = ref({})
 const progresoGanancia = ref(0)
 const route = useRoute()
 
-// 💰 Datos Económicos
 const calcularProgreso = () => {
   const meta = finca.value.objetivo_ingresos || 0
   const ganado = finca.value.dinero_ganado || 0
@@ -320,8 +320,8 @@ const guardarCambios = async () => {
   if (!token) return alert('⚠️ No hay token')
 
   try {
-    finca.value.dinero_gastado = totalGastos.value  // 💡 forzamos actualización
-    const res = await fetch(`http://localhost:3000/api/fincas/${finca.value.id}`, {
+    finca.value.dinero_gastado = totalGastos.value
+    const res = await fetch(`${baseURL}/api/fincas/${finca.value.id}`, {
       method: 'PUT',
       headers: {
         'Content-Type': 'application/json',
@@ -343,8 +343,8 @@ const guardarCambios = async () => {
 
 const guardarTodo = async () => {
   try {
-    await guardarCambios()      // guarda datos de la finca
-    await guardarIngresos()     // guarda ingresos detallados
+    await guardarCambios()
+    await guardarIngresos()
     alert('✅ Todos los cambios guardados correctamente')
   } catch (e) {
     console.error(e)
@@ -352,13 +352,11 @@ const guardarTodo = async () => {
   }
 }
 
-
-
 const fetchFinca = async () => {
   const id = route.params.id
   const token = localStorage.getItem('token')
   try {
-    const res = await fetch(`http://localhost:3000/api/fincas/${id}`, {
+    const res = await fetch(`${baseURL}/api/fincas/${id}`, {
       headers: { Authorization: `Bearer ${token}` }
     })
     finca.value = await res.json()
@@ -368,7 +366,6 @@ const fetchFinca = async () => {
   }
 }
 
-// 👨‍🌾 Trabajadores
 const trabajadores = ref([])
 const nuevoTrabajador = ref({ nombre: '', sueldo: 0 })
 
@@ -376,7 +373,7 @@ const fetchTrabajadores = async () => {
   const id = route.params.id
   const token = localStorage.getItem('token')
   try {
-    const res = await fetch(`http://localhost:3000/api/fincas/${id}/trabajadores`, {
+    const res = await fetch(`${baseURL}/api/fincas/${id}/trabajadores`, {
       headers: { Authorization: `Bearer ${token}` }
     })
     const data = await res.json()
@@ -402,7 +399,7 @@ const eliminarTrabajador = async (index) => {
   const fincaId = route.params.id
 
   try {
-    const res = await fetch(`http://localhost:3000/api/fincas/${fincaId}/trabajadores/${trabajador.id}`, {
+    const res = await fetch(`${baseURL}/api/fincas/${fincaId}/trabajadores/${trabajador.id}`, {
       method: 'DELETE',
       headers: { Authorization: `Bearer ${token}` }
     })
@@ -419,7 +416,7 @@ const guardarTrabajadores = async () => {
   const id = route.params.id
   const token = localStorage.getItem('token')
   try {
-    const res = await fetch(`http://localhost:3000/api/fincas/${id}/trabajadores`, {
+    const res = await fetch(`${baseURL}/api/fincas/${id}/trabajadores`, {
       method: 'POST',
       headers: {
         'Content-Type': 'application/json',
@@ -436,7 +433,6 @@ const guardarTrabajadores = async () => {
   }
 }
 
-// 🗓️ Calendario
 const calendario = ref([])
 const nuevaEtapa = ref({ etapa: '', fecha_inicio: '', fecha_fin: '' })
 
@@ -444,7 +440,7 @@ const fetchCalendario = async () => {
   const fincaId = route.params.id
   const token = localStorage.getItem('token')
   try {
-    const res = await fetch(`http://localhost:3000/api/fincas/${fincaId}/calendario`, {
+    const res = await fetch(`${baseURL}/api/fincas/${fincaId}/calendario`, {
       headers: { Authorization: `Bearer ${token}` }
     })
     const data = await res.json()
@@ -471,7 +467,7 @@ const guardarCalendario = async () => {
   const fincaId = route.params.id
   const token = localStorage.getItem('token')
   try {
-    const res = await fetch(`http://localhost:3000/api/fincas/${fincaId}/calendario`, {
+    const res = await fetch(`${baseURL}/api/fincas/${fincaId}/calendario`, {
       method: 'POST',
       headers: {
         'Content-Type': 'application/json',
@@ -488,7 +484,6 @@ const guardarCalendario = async () => {
   }
 }
 
-// 📋 Tareas
 const tareas = ref([])
 const nuevaTarea = ref({ titulo: '', descripcion: '', trabajadores: '' })
 
@@ -496,7 +491,7 @@ const agregarTarea = () => {
   if (!nuevaTarea.value.titulo) {
     return alert('Título requerido')
   }
-  tareas.value.push({ ...nuevaTarea.value, completada: false })  // agrego completada=false
+  tareas.value.push({ ...nuevaTarea.value, completada: false })
   nuevaTarea.value = { titulo: '', descripcion: '', trabajadores: '' }
 }
 
@@ -509,16 +504,14 @@ const toggleCompletada = async (tarea) => {
   if (!token) return alert('⚠️ No hay token')
 
   try {
-    // Cambio el estado localmente
     tarea.completada = !tarea.completada
 
-    // Actualizo backend (si tienes API para eso)
     const fincaId = route.params.id
     if (!tarea.id) {
       alert('Esta tarea aún no está guardada en el servidor.')
       return
     }
-    const res = await fetch(`http://localhost:3000/api/fincas/${fincaId}/tareas/${tarea.id}`, {
+    const res = await fetch(`${baseURL}/api/fincas/${fincaId}/tareas/${tarea.id}`, {
       method: 'PATCH',
       headers: {
         'Content-Type': 'application/json',
@@ -534,7 +527,7 @@ const toggleCompletada = async (tarea) => {
     await fetchTareas()
   } catch (error) {
     alert('❌ Error al actualizar estado')
-    tarea.completada = !tarea.completada // revertir en caso de error
+    tarea.completada = !tarea.completada
     console.error(error)
   }
 }
@@ -543,7 +536,7 @@ const guardarTareas = async () => {
   const fincaId = route.params.id
   const token = localStorage.getItem('token')
   try {
-    const res = await fetch(`http://localhost:3000/api/fincas/${fincaId}/tareas`, {
+    const res = await fetch(`${baseURL}/api/fincas/${fincaId}/tareas`, {
       method: 'POST',
       headers: {
         'Content-Type': 'application/json',
@@ -564,7 +557,7 @@ const fetchTareas = async () => {
   const fincaId = route.params.id
   const token = localStorage.getItem('token')
   try {
-    const res = await fetch(`http://localhost:3000/api/fincas/${fincaId}/tareas`, {
+    const res = await fetch(`${baseURL}/api/fincas/${fincaId}/tareas`, {
       headers: { Authorization: `Bearer ${token}` }
     })
     const data = await res.json()
@@ -580,7 +573,7 @@ const fetchUsuarioActual = async () => {
   if (!token) return
 
   try {
-    const res = await fetch('http://localhost:3000/api/usuarios/me', {
+    const res = await fetch(`${baseURL}/api/usuarios/me`, {
       headers: {
         Authorization: `Bearer ${token}`
       }
@@ -591,17 +584,18 @@ const fetchUsuarioActual = async () => {
     console.error('Error al obtener usuario actual:', error)
   }
 }
+
 const gastos = ref([])
 const nuevoGasto = ref({ descripcion: '', cantidad: 0 })
 
 const fetchGastos = async () => {
   const fincaId = route.params.id
-  const token = localStorage.getItem('token') // ⚠️ Asegúrate de haber guardado el token al iniciar sesión
+  const token = localStorage.getItem('token')
 
   try {
-    const res = await fetch(`http://localhost:3000/api/gastos/${fincaId}`, {
+    const res = await fetch(`${baseURL}/api/gastos/${fincaId}`, {
       headers: {
-        'Authorization': `Bearer ${token}`
+        Authorization: `Bearer ${token}`
       }
     })
 
@@ -614,8 +608,6 @@ const fetchGastos = async () => {
   }
 }
 
-
-
 const agregarGasto = async () => {
   const fincaId = route.params.id
   const { descripcion, cantidad } = nuevoGasto.value
@@ -624,11 +616,11 @@ const agregarGasto = async () => {
   if (!descripcion || cantidad <= 0) return alert('Datos del gasto inválidos')
 
   try {
-    const res = await fetch('http://localhost:3000/api/gastos', {
+    const res = await fetch(`${baseURL}/api/gastos`, {
       method: 'POST',
       headers: {
         'Content-Type': 'application/json',
-        'Authorization': `Bearer ${token}`
+        Authorization: `Bearer ${token}`
       },
       body: JSON.stringify({ finca_id: fincaId, descripcion, cantidad })
     })
@@ -639,21 +631,16 @@ const agregarGasto = async () => {
     nuevoGasto.value = { descripcion: '', cantidad: 0 }
     await fetchGastos()
     await actualizarDineroGastado()
-
   } catch (e) {
     console.error(e)
     alert('❌ No se pudo registrar el gasto')
   }
 }
 
-
-
 const actualizarDineroGastado = async () => {
   finca.value.dinero_gastado = gastos.value.reduce((total, g) => total + Number(g.cantidad), 0)
   calcularProgreso()
 }
-
-import { computed } from 'vue'
 
 const totalGastos = computed(() =>
   gastos.value.reduce((total, gasto) => total + (parseFloat(gasto.cantidad) || 0), 0)
@@ -672,9 +659,10 @@ const progresoGananciaReal = computed(() => {
 
 const barraColor = computed(() => {
   return finca.value.dinero_gastado > finca.value.dinero_ganado
-    ? 'bg-danger' // rojo si hay pérdida
-    : 'bg-success' // verde si va bien
+    ? 'bg-danger'
+    : 'bg-success'
 })
+
 const ingresos = ref([])
 const nuevoIngreso = ref({ descripcion: '', cantidad: 0 })
 
@@ -686,11 +674,11 @@ const agregarIngreso = async () => {
   if (!descripcion || cantidad <= 0) return alert('Datos de ingreso inválidos')
 
   try {
-    const res = await fetch('http://localhost:3000/api/fincas/' + fincaId + '/ingresos', {
+    const res = await fetch(`${baseURL}/api/fincas/${fincaId}/ingresos`, {
       method: 'POST',
       headers: {
         'Content-Type': 'application/json',
-        'Authorization': `Bearer ${token}`
+        Authorization: `Bearer ${token}`
       },
       body: JSON.stringify({ finca_id: fincaId, descripcion, cantidad })
     })
@@ -701,30 +689,25 @@ const agregarIngreso = async () => {
 
     nuevoIngreso.value = { descripcion: '', cantidad: 0 }
 
-    await fetchIngresos() // sobrescribe el array con lo que hay realmente en DB
-    await actualizarDineroGanado();
-
+    await fetchIngresos()
+    await actualizarDineroGanado()
   } catch (e) {
     console.error(e)
     alert('❌ No se pudo registrar el ingreso')
   }
 }
 
-
-
-
 const guardarIngresos = async () => {
-  const fincaId = route.params.id;
-  const token = localStorage.getItem('token');
+  const fincaId = route.params.id
+  const token = localStorage.getItem('token')
 
   try {
-    // Solo guardar ingresos que no tengan ID (es decir, nuevos)
-    const nuevos = ingresos.value.filter(i => !i.id);
+    const nuevos = ingresos.value.filter(i => !i.id)
 
     for (const ingreso of nuevos) {
-      if (!ingreso.descripcion || !ingreso.cantidad) continue;
+      if (!ingreso.descripcion || !ingreso.cantidad) continue
 
-      const res = await fetch(`http://localhost:3000/api/fincas/${fincaId}/ingresos`, {
+      const res = await fetch(`${baseURL}/api/fincas/${fincaId}/ingresos`, {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
@@ -735,33 +718,31 @@ const guardarIngresos = async () => {
           descripcion: ingreso.descripcion,
           cantidad: ingreso.cantidad
         })
-      });
+      })
 
-      if (!res.ok) throw new Error('Error guardando ingreso');
+      if (!res.ok) throw new Error('Error guardando ingreso')
     }
 
-    alert('✅ Nuevos ingresos guardados correctamente');
-    await fetchIngresos(); // Refresca para obtener IDs reales
-
+    alert('✅ Nuevos ingresos guardados correctamente')
+    await fetchIngresos()
   } catch (e) {
-    console.error(e);
-    alert('❌ Error al guardar ingresos');
+    console.error(e)
+    alert('❌ Error al guardar ingresos')
   }
-};
-
+}
 
 const fetchIngresos = async () => {
   const fincaId = route.params.id
   const token = localStorage.getItem('token')
 
   try {
-    const res = await fetch(`http://localhost:3000/api/ingresos/${fincaId}`, {
+    const res = await fetch(`${baseURL}/api/ingresos/${fincaId}`, {
       headers: { Authorization: `Bearer ${token}` }
     })
 
     const data = await res.json()
     ingresos.value = data || []
-    await actualizarDineroGanado(); // ⬅️ Aquí
+    await actualizarDineroGanado()
   } catch (e) {
     console.error('Error al obtener ingresos:', e)
   }
@@ -773,7 +754,7 @@ const nuevaProduccion = ref({
   fecha_fin: '',
   tipo: '',
   cantidad: null,
-  descripcion: '',
+  descripcion: ''
 })
 const modoEdicion = ref(false)
 const produccionEditandoId = ref(null)
@@ -781,8 +762,8 @@ const produccionEditandoId = ref(null)
 const fetchProducciones = async () => {
   const fincaId = route.params.id
   const token = localStorage.getItem('token')
-  const res = await fetch(`http://localhost:3000/api/fincas/${fincaId}/producciones`, {
-    headers: { Authorization: `Bearer ${token}` },
+  const res = await fetch(`${baseURL}/api/fincas/${fincaId}/producciones`, {
+    headers: { Authorization: `Bearer ${token}` }
   })
   const data = await res.json()
   producciones.value = data.producciones || []
@@ -793,10 +774,10 @@ const agregarProduccion = async () => {
   const token = localStorage.getItem('token')
   const body = { ...nuevaProduccion.value, finca_id: fincaId }
 
-  const res = await fetch(`http://localhost:3000/api/fincas/${fincaId}/producciones`, {
+  const res = await fetch(`${baseURL}/api/fincas/${fincaId}/producciones`, {
     method: 'POST',
     headers: { 'Content-Type': 'application/json', Authorization: `Bearer ${token}` },
-    body: JSON.stringify(body),
+    body: JSON.stringify(body)
   })
 
   if (!res.ok) return alert('❌ Error al guardar')
@@ -816,10 +797,10 @@ const actualizarProduccion = async () => {
   const token = localStorage.getItem('token')
   const id = produccionEditandoId.value
 
-  const res = await fetch(`http://localhost:3000/api/fincas/${fincaId}/producciones/${id}`, {
+  const res = await fetch(`${baseURL}/api/fincas/${fincaId}/producciones/${id}`, {
     method: 'PUT',
     headers: { 'Content-Type': 'application/json', Authorization: `Bearer ${token}` },
-    body: JSON.stringify(nuevaProduccion.value),
+    body: JSON.stringify(nuevaProduccion.value)
   })
 
   if (!res.ok) return alert('❌ Error al actualizar')
@@ -834,9 +815,9 @@ const eliminarProduccion = async (id) => {
   const fincaId = route.params.id
   const token = localStorage.getItem('token')
 
-  const res = await fetch(`http://localhost:3000/api/fincas/${fincaId}/producciones/${id}`, {
+  const res = await fetch(`${baseURL}/api/fincas/${fincaId}/producciones/${id}`, {
     method: 'DELETE',
-    headers: { Authorization: `Bearer ${token}` },
+    headers: { Authorization: `Bearer ${token}` }
   })
   if (!res.ok) return alert('❌ Error al eliminar')
   await fetchProducciones()
@@ -849,7 +830,7 @@ const fetchRendimientoProducciones = async () => {
   const token = localStorage.getItem('token')
 
   try {
-    const res = await fetch(`http://localhost:3000/api/fincas/${fincaId}/rendimiento-producciones`, {
+    const res = await fetch(`${baseURL}/api/fincas/${fincaId}/rendimiento-producciones`, {
       headers: { Authorization: `Bearer ${token}` }
     })
     const data = await res.json()
@@ -872,11 +853,10 @@ onMounted(async () => {
   await fetchRendimientoProducciones()
 })
 
-
 const actualizarDineroGanado = async () => {
-  finca.value.dinero_ganado = ingresos.value.reduce((total, ingreso) => total + Number(ingreso.cantidad || 0), 0);
-  calcularProgreso();
-};
+  finca.value.dinero_ganado = ingresos.value.reduce((total, ingreso) => total + Number(ingreso.cantidad || 0), 0)
+  calcularProgreso()
+}
 
 const formatearFecha = (fecha) => {
   if (!fecha) return ''
@@ -884,7 +864,7 @@ const formatearFecha = (fecha) => {
   return d.toLocaleDateString('es-ES', {
     day: '2-digit',
     month: '2-digit',
-    year: 'numeric',
+    year: 'numeric'
   })
 }
 </script>

@@ -42,6 +42,8 @@
 <script>
 import axios from 'axios';
 
+const baseURL = import.meta.env.VITE_API_URL || 'http://localhost:3000';
+
 export default {
   data() {
     return {
@@ -74,7 +76,7 @@ export default {
 
       try {
         const response = await axios.post(
-          'http://localhost:3000/api/register-trabajador',
+          `${baseURL}/api/register-trabajador`,
           {
             username: this.form.username,
             email: this.form.email,
