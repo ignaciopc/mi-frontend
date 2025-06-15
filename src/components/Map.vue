@@ -159,12 +159,9 @@ onMounted(async () => {
 }
 
 .btn-centrar {
-  position: fixed;
-  /* para que quede fijo y visible */
+  position: absolute;
   bottom: 15px;
-  /* distancia desde abajo */
   left: 15px;
-  /* distancia desde la izquierda */
   z-index: 1000;
   background-color: #3498db;
   color: white;
@@ -181,4 +178,5 @@ onMounted(async () => {
 .btn-centrar:hover {
   background-color: #2980b9;
 }
+
 </style>
