@@ -1,11 +1,12 @@
 <template>
-  <div class="map-wrapper">
+  <div class="map-wrapper p-4 container rounded-4">
     <div id="map" class="map-container"></div>
+    <button class="btn-centrar" @click="centrarUbicacion">📍 Mi ubicación</button>
   </div>
 </template>
 
 <script setup>
-import { onMounted } from 'vue'
+import { onMounted, ref } from 'vue'
 import { useRouter } from 'vue-router'
 import L from 'leaflet'
 import 'leaflet/dist/leaflet.css'
@@ -14,8 +15,10 @@ import 'leaflet-geosearch/dist/geosearch.css'
 import axios from 'axios'
 
 const router = useRouter()
+const mapRef = ref(null)
+const API_URL = import.meta.env.VITE_API_URL || 'http://localhost:3000'
 
-// Corregimos rutas de iconos para Leaflet
+// Fix icons for Leaflet (important!)
 delete L.Icon.Default.prototype._getIconUrl
 L.Icon.Default.mergeOptions({
   iconRetinaUrl: new URL('leaflet/dist/images/marker-icon-2x.png', import.meta.url).href,
@@ -23,13 +26,43 @@ L.Icon.Default.mergeOptions({
   shadowUrl: new URL('leaflet/dist/images/marker-shadow.png', import.meta.url).href,
 })
 
+const centrarUbicacion = () => {
+  if (!mapRef.value) return
+
+  if (navigator.geolocation) {
+    navigator.geolocation.getCurrentPosition(
+      (position) => {
+        const lat = position.coords.latitude
+        const lon = position.coords.longitude
+
+        L.marker([lat, lon])
+          .addTo(mapRef.value)
+          .bindPopup('Estás aquí 📍')
+          .openPopup()
+
+        mapRef.value.setView([lat, lon], 14)
+      },
+      (error) => {
+        console.error('No se pudo obtener la ubicación:', error)
+        alert('No se pudo obtener la ubicación.')
+      }
+    )
+  } else {
+    alert('La geolocalización no está disponible en este navegador.')
+  }
+}
+
 onMounted(async () => {
   const map = L.map('map').setView([40, -3], 6)
+  mapRef.value = map
 
-  L.tileLayer('https://server.arcgisonline.com/ArcGIS/rest/services/World_Imagery/MapServer/tile/{z}/{y}/{x}', {
-    attribution: 'Tiles © Esri'
-  }).addTo(map)
+  // Capa base satelital
+  L.tileLayer(
+    'https://server.arcgisonline.com/ArcGIS/rest/services/World_Imagery/MapServer/tile/{z}/{y}/{x}',
+    { attribution: 'Tiles © Esri' }
+  ).addTo(map)
 
+  // Buscador
   const provider = new OpenStreetMapProvider()
   const searchControl = new GeoSearchControl({
     provider,
@@ -50,16 +83,14 @@ onMounted(async () => {
   }
 
   try {
-    const response = await axios.get('http://localhost:3000/api/fincas/lista', {
-      headers: {
-        Authorization: `Bearer ${token}`
-      }
+    const response = await axios.get(`${API_URL}/api/fincas/lista`, {
+      headers: { Authorization: `Bearer ${token}` },
     })
 
     const fincas = response.data.fincas
     const layers = []
 
-    fincas.forEach(finca => {
+    fincas.forEach((finca) => {
       if (!finca.ubicacion_geojson) return
 
       const geojson = JSON.parse(finca.ubicacion_geojson)
@@ -67,14 +98,14 @@ onMounted(async () => {
       const layer = L.geoJSON(geojson, {
         style: {
           color: '#3388ff',
-          weight: 2
+          weight: 2,
         },
-        onEachFeature: function (feature, layer) {
+        onEachFeature: (feature, layer) => {
           layer.on('click', () => {
             router.push(`/fincas/detalles/${finca.id}`)
           })
           layer.bindPopup(`<b>${finca.nombre}</b><br>Click para ver detalles.`)
-        }
+        },
       }).addTo(map)
       layers.push(layer)
 
@@ -102,7 +133,6 @@ onMounted(async () => {
       map.fitBounds(group.getBounds().pad(0.2))
       setTimeout(() => map.invalidateSize(), 100)
     }
-
   } catch (error) {
     console.error('Error al cargar fincas desde el backend:', error.response?.data || error.message)
   }
@@ -111,15 +141,60 @@ onMounted(async () => {
 
 <style scoped>
 .map-wrapper {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  position: relative;
   width: 100%;
-  height: 100%;
-  padding: 10px;
+  height: 80vh;
+  background-color: #f0f0f0;
+  margin-top: 60px;
 }
 
 .map-container {
   width: 100%;
-  height: 300px;
+  height: 100%;
   border-radius: 8px;
-  box-shadow: 0 0 8px rgba(0, 0, 0, 0.2);
+  box-shadow: 0 0 10px rgba(0, 0, 0, 0.2);
+}
+
+.btn-centrar {
+  position: absolute;
+  z-index: 1000;
+  background-color: #3498db;
+  color: white;
+  border: none;
+  padding: 10px 14px;
+  border-radius: 8px;
+  font-size: 14px;
+  cursor: pointer;
+  box-shadow: 0 2px 6px rgba(0, 0, 0, 0.3);
+  transition: background-color 0.3s;
+}
+
+/* Hover */
+.btn-centrar:hover {
+  background-color: #2980b9;
+}
+
+/* Responsive: abajo a la derecha en móviles */
+/* 📱 Móviles: esquina inferior izquierda */
+@media (max-width: 768px) {
+  .btn-centrar {
+    bottom: 15px;
+    left: 15px;
+    top: auto;
+    right: auto;
+  }
+}
+
+/* 🖥️ Escritorio: esquina superior derecha */
+@media (min-width: 769px) {
+  .btn-centrar {
+    top: 15px;
+    right: 15px;
+    bottom: auto;
+    left: auto;
+  }
 }
 </style>
