@@ -1,117 +1,126 @@
 <template>
   <header class="navbar navbar-expand-lg navbar-dark bg-success px-4 py-3 rounded shadow mx-auto mt-3" style="width: 80%;">
     <div class="container-fluid">
-      <template v-if="isAuthenticated">
-        <router-link class="navbar-brand fw-bold" to="/home">Inicio</router-link>
 
-        <button
-          class="navbar-toggler"
-          type="button"
-          data-bs-toggle="collapse"
-          data-bs-target="#navbarNavDropdown"
-        >
-          <span class="navbar-toggler-icon"></span>
-        </button>
+      <div v-if="loading" class="text-center text-white">
+        <!-- Puedes poner un spinner aquí si quieres -->
+        Cargando...
+      </div>
 
-        <div class="collapse navbar-collapse justify-content-center" id="navbarNavDropdown">
-          <ul class="navbar-nav gap-2">
-            <!-- Fincas -->
-            <li class="nav-item dropdown">
-              <button
-                class="nav-link dropdown-toggle btn btn-link"
-                type="button"
-                data-bs-toggle="dropdown"
-                aria-expanded="false"
-              >
-                Fincas
-              </button>
-              <ul class="dropdown-menu">
-                <li><router-link to="/fincas/lista" class="dropdown-item">Lista de Fincas</router-link></li>
-                <li><router-link to="/fincas/mapa" class="dropdown-item">Mapa Interactivo</router-link></li>
-                <li v-if="usuarioActual?.rol !== 'trabajador'"><router-link to="/fincas/crear" class="dropdown-item">Agregar Nueva Finca</router-link></li>
-                <li v-if="usuarioActual?.rol !== 'trabajador'"><router-link to="/fincas/rendimiento" class="dropdown-item">Rendimiento</router-link></li>
-              </ul>
-            </li>
+      <div v-else>
+        <template v-if="isAuthenticated">
+          <router-link class="navbar-brand fw-bold" to="/home">Inicio</router-link>
 
-            <!-- Tareas -->
-            <li class="nav-item dropdown">
-              <button
-                class="nav-link dropdown-toggle btn btn-link"
-                type="button"
-                data-bs-toggle="dropdown"
-                aria-expanded="false"
-              >
-                Tareas y Proyectos
-              </button>
-              <ul class="dropdown-menu">
-                <li><router-link to="/tareas/lista" class="dropdown-item">Lista de Tareas</router-link></li>
-                <li><router-link to="/tareas/calendario" class="dropdown-item">Calendario de Actividades</router-link></li>
-              </ul>
-            </li>
+          <button
+            class="navbar-toggler"
+            type="button"
+            data-bs-toggle="collapse"
+            data-bs-target="#navbarNavDropdown"
+          >
+            <span class="navbar-toggler-icon"></span>
+          </button>
 
-            <!-- Finanzas -->
-            <li class="nav-item dropdown" v-if="usuarioActual?.rol !== 'trabajador'">
-              <button
-                class="nav-link dropdown-toggle btn btn-link"
-                type="button"
-                data-bs-toggle="dropdown"
-                aria-expanded="false"
-              >
-                Finanzas
-              </button>
-              <ul class="dropdown-menu">
-                <li><router-link to="/finanzas/resumen" class="dropdown-item">Resumen de Finanzas</router-link></li>
-                <li v-if="usuarioActual?.rol !== 'trabajador'"><router-link to="/finanzas/informe-financiero" class="dropdown-item">Informe Financiero</router-link></li>
-              </ul>
-            </li>
+          <div class="collapse navbar-collapse justify-content-center" id="navbarNavDropdown">
+            <ul class="navbar-nav gap-2">
+              <!-- Fincas -->
+              <li class="nav-item dropdown">
+                <button
+                  class="nav-link dropdown-toggle btn btn-link"
+                  type="button"
+                  data-bs-toggle="dropdown"
+                  aria-expanded="false"
+                >
+                  Fincas
+                </button>
+                <ul class="dropdown-menu">
+                  <li><router-link to="/fincas/lista" class="dropdown-item">Lista de Fincas</router-link></li>
+                  <li><router-link to="/fincas/mapa" class="dropdown-item">Mapa Interactivo</router-link></li>
+                  <li v-if="usuarioActual?.rol !== 'trabajador'"><router-link to="/fincas/crear" class="dropdown-item">Agregar Nueva Finca</router-link></li>
+                  <li v-if="usuarioActual?.rol !== 'trabajador'"><router-link to="/fincas/rendimiento" class="dropdown-item">Rendimiento</router-link></li>
+                </ul>
+              </li>
 
-            <!-- Usuarios -->
-            <li class="nav-item dropdown" v-if="usuarioActual?.rol !== 'trabajador'">
-              <button
-                class="nav-link dropdown-toggle btn btn-link"
-                type="button"
-                data-bs-toggle="dropdown"
-                aria-expanded="false"
-              >
-                Usuarios y Roles
-              </button>
-              <ul class="dropdown-menu">
-                <li><router-link to="/usuarios/lista" class="dropdown-item">Lista de Usuarios</router-link></li>
-                <li><router-link to="/usuarios/roles" class="dropdown-item">Creacion de trabajadores</router-link></li>
-              </ul>
-            </li>
+              <!-- Tareas -->
+              <li class="nav-item dropdown">
+                <button
+                  class="nav-link dropdown-toggle btn btn-link"
+                  type="button"
+                  data-bs-toggle="dropdown"
+                  aria-expanded="false"
+                >
+                  Tareas y Proyectos
+                </button>
+                <ul class="dropdown-menu">
+                  <li><router-link to="/tareas/lista" class="dropdown-item">Lista de Tareas</router-link></li>
+                  <li><router-link to="/tareas/calendario" class="dropdown-item">Calendario de Actividades</router-link></li>
+                </ul>
+              </li>
 
-            <!-- Documentos -->
-            <li v-if="usuarioActual?.rol !== 'trabajador'" class="nav-item dropdown">
-              <button
-                class="nav-link dropdown-toggle btn btn-link"
-                type="button"
-                data-bs-toggle="dropdown"
-                aria-expanded="false"
-              >
-                Documentos
-              </button>
-              <ul class="dropdown-menu">
-                <li><router-link to="/documentos/generar" class="dropdown-item">Gestión de Documentos</router-link></li>
-                <li><router-link to="/documentos/vencimientos" class="dropdown-item">Control de Vencimientos</router-link></li>
-              </ul>
-            </li>
+              <!-- Finanzas -->
+              <li class="nav-item dropdown" v-if="usuarioActual?.rol !== 'trabajador'">
+                <button
+                  class="nav-link dropdown-toggle btn btn-link"
+                  type="button"
+                  data-bs-toggle="dropdown"
+                  aria-expanded="false"
+                >
+                  Finanzas
+                </button>
+                <ul class="dropdown-menu">
+                  <li><router-link to="/finanzas/resumen" class="dropdown-item">Resumen de Finanzas</router-link></li>
+                  <li v-if="usuarioActual?.rol !== 'trabajador'"><router-link to="/finanzas/informe-financiero" class="dropdown-item">Informe Financiero</router-link></li>
+                </ul>
+              </li>
 
-            <!-- Cuenta -->
-            <li class="nav-item">
-              <router-link to="/cuenta" class="nav-link">Cuenta</router-link>
-            </li>
-            <li class="nav-item">
-              <router-link to="/home" class="nav-link">Inicio</router-link>
-            </li>
-          </ul>
-        </div>
-      </template>
+              <!-- Usuarios -->
+              <li class="nav-item dropdown" v-if="usuarioActual?.rol !== 'trabajador'">
+                <button
+                  class="nav-link dropdown-toggle btn btn-link"
+                  type="button"
+                  data-bs-toggle="dropdown"
+                  aria-expanded="false"
+                >
+                  Usuarios y Roles
+                </button>
+                <ul class="dropdown-menu">
+                  <li><router-link to="/usuarios/lista" class="dropdown-item">Lista de Usuarios</router-link></li>
+                  <li><router-link to="/usuarios/roles" class="dropdown-item">Creacion de trabajadores</router-link></li>
+                </ul>
+              </li>
 
-      <template v-else>
-        <!-- Solo mostrar link a /session cuando NO está autenticado -->
-        <router-link class="navbar-brand fw-bold" to="/session">Iniciar Sesión</router-link>
-      </template>
+              <!-- Documentos -->
+              <li v-if="usuarioActual?.rol !== 'trabajador'" class="nav-item dropdown">
+                <button
+                  class="nav-link dropdown-toggle btn btn-link"
+                  type="button"
+                  data-bs-toggle="dropdown"
+                  aria-expanded="false"
+                >
+                  Documentos
+                </button>
+                <ul class="dropdown-menu">
+                  <li><router-link to="/documentos/generar" class="dropdown-item">Gestión de Documentos</router-link></li>
+                  <li><router-link to="/documentos/vencimientos" class="dropdown-item">Control de Vencimientos</router-link></li>
+                </ul>
+              </li>
+
+              <!-- Cuenta -->
+              <li class="nav-item">
+                <router-link to="/cuenta" class="nav-link">Cuenta</router-link>
+              </li>
+              <li class="nav-item">
+                <router-link to="/home" class="nav-link">Inicio</router-link>
+              </li>
+            </ul>
+          </div>
+        </template>
+
+        <template v-else>
+          <!-- Solo mostrar link a /session cuando NO está autenticado -->
+          <router-link class="navbar-brand fw-bold" to="/session">Iniciar Sesión</router-link>
+        </template>
+      </div>
+
     </div>
   </header>
 </template>
@@ -124,17 +133,19 @@ const API_URL = import.meta.env.VITE_API_URL || 'http://localhost:3000'
 
 const isAuthenticated = ref(false)
 const usuarioActual = ref(null)
+const loading = ref(true)  // nuevo estado de carga
 const route = useRoute()
 
 async function checkAuthentication() {
+  loading.value = true
   const token = localStorage.getItem('token')
   if (!token) {
     isAuthenticated.value = false
     usuarioActual.value = null
+    loading.value = false
     return
   }
 
-  // Token existe, validar usuario actual
   try {
     const res = await fetch(`${API_URL}/api/usuarios/me`, {
       headers: { Authorization: `Bearer ${token}` }
@@ -146,10 +157,11 @@ async function checkAuthentication() {
     isAuthenticated.value = true
   } catch (error) {
     console.error('Error autenticando usuario:', error)
-    // Token inválido, limpiamos todo
     localStorage.removeItem('token')
     usuarioActual.value = null
     isAuthenticated.value = false
+  } finally {
+    loading.value = false
   }
 }
 
@@ -161,5 +173,3 @@ watch(route, () => {
   checkAuthentication()
 })
 </script>
-
-
