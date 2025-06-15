@@ -126,47 +126,40 @@ const isAuthenticated = ref(false)
 const usuarioActual = ref(null)
 const route = useRoute()
 
-function checkAuthentication() {
-  const token = localStorage.getItem('token')
-  isAuthenticated.value = !!token
-}
-
-async function fetchUsuarioActual() {
+async function checkAuthentication() {
   const token = localStorage.getItem('token')
   if (!token) {
+    isAuthenticated.value = false
     usuarioActual.value = null
     return
   }
 
+  // Token existe, validar usuario actual
   try {
     const res = await fetch(`${API_URL}/api/usuarios/me`, {
-      headers: {
-        Authorization: `Bearer ${token}`
-      }
+      headers: { Authorization: `Bearer ${token}` }
     })
-    if (!res.ok) throw new Error('Error al obtener usuario')
-    usuarioActual.value = await res.json()
-  } catch (error) {
-    console.error('Error al obtener usuario actual:', error)
-    usuarioActual.value = null
-  }
-}
 
-async function actualizarHeader() {
-  checkAuthentication()
-  if (isAuthenticated.value) {
-    await fetchUsuarioActual()
-  } else {
+    if (!res.ok) throw new Error('Token inválido o expirado')
+
+    usuarioActual.value = await res.json()
+    isAuthenticated.value = true
+  } catch (error) {
+    console.error('Error autenticando usuario:', error)
+    // Token inválido, limpiamos todo
+    localStorage.removeItem('token')
     usuarioActual.value = null
+    isAuthenticated.value = false
   }
 }
 
 onMounted(() => {
-  actualizarHeader()
+  checkAuthentication()
 })
 
 watch(route, () => {
-  actualizarHeader()
+  checkAuthentication()
 })
 </script>
+
 
