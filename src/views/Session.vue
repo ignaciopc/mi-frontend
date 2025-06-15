@@ -24,7 +24,7 @@
       <p class="login-link">
         ¿No tienes una cuenta? <router-link to="/register">Regístrate</router-link>
       </p>
-      
+
       <!-- Mostrar mensaje de error si existe -->
       <div v-if="errorMessage" class="error-message">{{ errorMessage }}</div>
     </article>
@@ -49,8 +49,9 @@ export default {
       this.errorMessage = ''; // Limpiar mensaje de error
 
       try {
-        const response = await axios.post('http://localhost:3000/api/login', this.form);
+        const baseURL = import.meta.env.VITE_API_URL || 'http://localhost:3000';
 
+        const response = await axios.post(`${baseURL}/api/login`, this.form);
         // Si la respuesta es exitosa, se guarda el token
         const token = response.data.token;
         localStorage.setItem('token', token);
