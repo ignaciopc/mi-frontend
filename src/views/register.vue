@@ -68,38 +68,61 @@ export default {
       successMessage: ''
     };
   },
-  methods: {
-    async handleSubmit() {
-      this.errorMessage = '';
-      this.successMessage = '';
+methods: {
+  async handleSubmit() {
+    this.errorMessage = '';
+    this.successMessage = '';
 
-      if (this.form.password !== this.form.confirmPassword) {
-        this.errorMessage = 'Las contraseñas no coinciden.';
-        return;
-      }
+    if (this.form.password !== this.form.confirmPassword) {
+      this.errorMessage = 'Las contraseñas no coinciden.';
+      return;
+    }
 
-      try {
-        const response = await axios.post(
-          `${baseURL}/api/register`,
-          this.form,
-          {
-            headers: {
-              'Content-Type': 'application/json'
-            },
-            withCredentials: true
-          }
-        );
-
-        this.successMessage = response.data.message;
-      } catch (error) {
-        if (error.response) {
-          this.errorMessage = error.response.data.message || 'Error en el servidor';
-        } else {
-          this.errorMessage = 'Error de conexión';
+    try {
+      // Registro
+      const response = await axios.post(
+        `${baseURL}/api/register`,
+        this.form,
+        {
+          headers: {
+            'Content-Type': 'application/json'
+          },
+          withCredentials: true
         }
+      );
+
+      this.successMessage = response.data.message;
+
+      // Login automático justo después
+      const loginResponse = await axios.post(
+        `${baseURL}/api/login`,
+        {
+          email: this.form.email,
+          password: this.form.password
+        },
+        {
+          headers: {
+            'Content-Type': 'application/json'
+          },
+          withCredentials: true
+        }
+      );
+
+      // Guardar token y redirigir
+      const token = loginResponse.data.token;
+      localStorage.setItem('token', token);
+
+      this.$router.push('/home');  // O a la ruta que quieras
+
+    } catch (error) {
+      if (error.response) {
+        this.errorMessage = error.response.data.message || 'Error en el servidor';
+      } else {
+        this.errorMessage = 'Error de conexión';
       }
     }
   }
+}
 };
 </script>
 
