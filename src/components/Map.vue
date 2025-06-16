@@ -1,5 +1,5 @@
 <template>
-  <div class="map-wrapper p-4 container rounded-4">
+  <div class="map-wrapper container rounded-4">
     <div id="map" class="map-container"></div>
     <button class="btn-centrar" @click="centrarUbicacion">📍 Mi ubicación</button>
   </div>
