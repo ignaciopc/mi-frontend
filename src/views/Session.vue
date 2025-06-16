@@ -1,7 +1,7 @@
 <template>
   <section class="register-container">
     <!-- Formulario de registro -->
-    <article class="form-box  mx-3 mx-md-0">
+    <article class="form-box mx-3 mx-md-0 mb-5 mb-md-0">
       <h2>Inicio de Sesión</h2>
       <form @submit.prevent="handleSubmit">
         <!-- Campo de correo electrónico -->
