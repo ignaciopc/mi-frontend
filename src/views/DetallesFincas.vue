@@ -295,6 +295,7 @@
               </ul>
             </div>
           </div>
+
         </div>
       </div>
     </div>
@@ -781,7 +782,11 @@ const agregarProduccion = async () => {
   })
 
   if (!res.ok) return alert('❌ Error al guardar')
+
+  // Recarga producciones y rendimiento actualizado
   await fetchProducciones()
+  await fetchRendimientoProducciones()
+
   nuevaProduccion.value = { fecha_inicio: '', fecha_fin: '', tipo: '', cantidad: null, descripcion: '' }
 }
 
@@ -806,6 +811,8 @@ const actualizarProduccion = async () => {
   if (!res.ok) return alert('❌ Error al actualizar')
 
   await fetchProducciones()
+  await fetchRendimientoProducciones()
+
   modoEdicion.value = false
   produccionEditandoId.value = null
   nuevaProduccion.value = { fecha_inicio: '', fecha_fin: '', tipo: '', cantidad: null, descripcion: '' }
@@ -821,6 +828,8 @@ const eliminarProduccion = async (id) => {
   })
   if (!res.ok) return alert('❌ Error al eliminar')
   await fetchProducciones()
+  await fetchRendimientoProducciones()
+
 }
 
 const rendimientoProducciones = ref([])
