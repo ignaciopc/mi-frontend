@@ -1,77 +1,61 @@
 <template>
-  <header class="navbar navbar-expand-lg navbar-dark bg-success px-4 py-3 rounded shadow mx-auto mt-3" style="width: 80%;">
+  <header class="navbar navbar-expand-lg navbar-dark bg-success px-4 py-3 rounded shadow mx-auto mt-3"
+    style="width: 80%;">
     <div class="container-fluid">
       <template v-if="isAuthenticated">
         <router-link class="navbar-brand fw-bold" to="/home">Inicio</router-link>
 
-        <button
-          class="navbar-toggler"
-          type="button"
-          data-bs-toggle="collapse"
-          data-bs-target="#navbarNavDropdown"
-        >
+        <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNavDropdown">
           <span class="navbar-toggler-icon"></span>
         </button>
 
         <div class="collapse navbar-collapse justify-content-center" id="navbarNavDropdown">
           <ul class="navbar-nav gap-2">
             <!-- Fincas -->
+            <li class="nav-item">
+              <router-link to="/home" class="nav-link">Inicio</router-link>
+            </li>
             <li class="nav-item dropdown">
-              <button
-                class="nav-link dropdown-toggle btn btn-link"
-                type="button"
-                data-bs-toggle="dropdown"
-                aria-expanded="false"
-              >
+              <button class="nav-link dropdown-toggle btn btn-link" type="button" data-bs-toggle="dropdown"
+                aria-expanded="false">
                 Fincas
               </button>
               <ul class="dropdown-menu">
                 <li><router-link to="/fincas/lista" class="dropdown-item">Lista de Fincas</router-link></li>
                 <li><router-link to="/fincas/mapa" class="dropdown-item">Mapa Interactivo</router-link></li>
-                <li v-if="usuarioActual?.rol !== 'trabajador'"><router-link to="/fincas/crear" class="dropdown-item">Agregar Nueva Finca</router-link></li>
+                <li v-if="usuarioActual?.rol !== 'trabajador'"><router-link to="/fincas/crear"
+                    class="dropdown-item">Agregar Nueva Finca</router-link></li>
               </ul>
             </li>
 
             <!-- Tareas -->
             <li class="nav-item dropdown">
-              <button
-                class="nav-link dropdown-toggle btn btn-link"
-                type="button"
-                data-bs-toggle="dropdown"
-                aria-expanded="false"
-              >
+              <button class="nav-link dropdown-toggle btn btn-link" type="button" data-bs-toggle="dropdown"
+                aria-expanded="false">
                 Tareas y Proyectos
               </button>
               <ul class="dropdown-menu">
                 <li><router-link to="/tareas/lista" class="dropdown-item">Lista de Tareas</router-link></li>
-                <li><router-link to="/tareas/calendario" class="dropdown-item">Calendario de Actividades</router-link></li>
+                <li><router-link to="/tareas/calendario" class="dropdown-item">Calendario de Actividades</router-link>
+                </li>
               </ul>
             </li>
 
             <!-- Finanzas -->
             <li class="nav-item dropdown" v-if="usuarioActual?.rol !== 'trabajador'">
-              <button
-                class="nav-link dropdown-toggle btn btn-link"
-                type="button"
-                data-bs-toggle="dropdown"
-                aria-expanded="false"
-              >
+              <button class="nav-link dropdown-toggle btn btn-link" type="button" data-bs-toggle="dropdown"
+                aria-expanded="false">
                 Finanzas
               </button>
               <ul class="dropdown-menu">
                 <li><router-link to="/finanzas/resumen" class="dropdown-item">Resumen de Finanzas</router-link></li>
-                <li v-if="usuarioActual?.rol !== 'trabajador'"><router-link to="/finanzas/informe-financiero" class="dropdown-item">Informe Financiero</router-link></li>
               </ul>
             </li>
 
             <!-- Usuarios -->
             <li class="nav-item dropdown" v-if="usuarioActual?.rol !== 'trabajador'">
-              <button
-                class="nav-link dropdown-toggle btn btn-link"
-                type="button"
-                data-bs-toggle="dropdown"
-                aria-expanded="false"
-              >
+              <button class="nav-link dropdown-toggle btn btn-link" type="button" data-bs-toggle="dropdown"
+                aria-expanded="false">
                 Usuarios y Roles
               </button>
               <ul class="dropdown-menu">
@@ -82,12 +66,8 @@
 
             <!-- Documentos -->
             <li v-if="usuarioActual?.rol !== 'trabajador'" class="nav-item dropdown">
-              <button
-                class="nav-link dropdown-toggle btn btn-link"
-                type="button"
-                data-bs-toggle="dropdown"
-                aria-expanded="false"
-              >
+              <button class="nav-link dropdown-toggle btn btn-link" type="button" data-bs-toggle="dropdown"
+                aria-expanded="false">
                 Documentos
               </button>
               <ul class="dropdown-menu">
@@ -99,9 +79,7 @@
             <li class="nav-item">
               <router-link to="/cuenta" class="nav-link">Cuenta</router-link>
             </li>
-            <li class="nav-item">
-              <router-link to="/home" class="nav-link">Inicio</router-link>
-            </li>
+
           </ul>
         </div>
       </template>
@@ -112,7 +90,8 @@
       </template>
     </div>
   </header>
-</template><script setup>
+</template>
+<script setup>
 import { ref, onMounted, watch } from 'vue'
 import { useRoute } from 'vue-router'
 
