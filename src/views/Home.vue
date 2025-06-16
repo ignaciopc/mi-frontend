@@ -11,7 +11,7 @@
         <p>Reparto de gastos</p>
         <EarningsChart :ganado="dineroGanado" :gastado="dineroGastado" />
       </div>
-      <div class="card large">
+      <div class="card large mapa-interactivo">
         <p>Mapa interactivo</p>
         <Map />
       </div>
@@ -146,6 +146,10 @@ onMounted(fetchDashboardData)
   flex-wrap: wrap;
   gap: 10px;
   margin-top: 20px;
+}
+
+.mapa-interactivo{
+  max-height: 500px;
 }
 
 button {
