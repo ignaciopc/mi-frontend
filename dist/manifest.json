@@ -1,7 +1,7 @@
 {
   "name": "Gesti\u00f3n de Fincas",
   "short_name": "Fincas",
-  "start_url": "/",
+  "start_url": "/mi-frontend/#/home",
   "display": "standalone",
   "background_color": "#ffffff",
   "theme_color": "#6B8E23",
