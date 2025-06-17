@@ -19,7 +19,7 @@
 
     <div class="row">
       <div class="card small">
-        <router-link to="/fincas/lista">Ver detalles</router-link>
+        <router-link to="/fincas/lista">Ver lista de fincas</router-link>
       </div>
       <div class="card large">
         <p>Lista de tareas</p>
