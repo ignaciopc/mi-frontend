@@ -2,11 +2,11 @@
   <div class="dashboard container">
     <div class="row">
       <div class="card">Total de fincas: {{ totalFincas }}</div>
-      <div class="card">Ganancias esperada: {{ formatCurrency(produccionEsperada) }}</div>
+      <div class="card">Producción esperada: {{ formatCurrency(produccionEsperada) }}</div>
       <div class="card">Tareas pendientes: {{ tareasPendientes }}</div>
     </div>
 
-    <div v-if="usuarioActual?.rol !== 'trabajador'" class="row">
+    <div class="row">
       <div class="card large">
         <p>Reparto de gastos</p>
         <EarningsChart :ganado="dineroGanado" :gastado="dineroGastado" />
@@ -19,7 +19,7 @@
 
     <div class="row">
       <div class="card small">
-        <router-link to="/fincas/lista">Ver lista de fincas</router-link>
+        <router-link to="/fincas/lista">Ver detalles</router-link>
       </div>
       <div class="card large">
         <p>Lista de tareas</p>
@@ -32,10 +32,10 @@
     </div>
 
     <div class="button-row">
-      <button v-if="usuarioActual?.rol !== 'trabajador'" @click="goTo('/fincas/mapa')">+ Ver mapa</button>
-      <button v-if="usuarioActual?.rol !== 'trabajador'" @click="goTo('/finanzas/resumen')">Gastos por Finca</button>
+      <button @click="goTo('/fincas/mapa')">+ Ver mapa</button>
+      <button @click="goTo('/finanzas/resumen')">Gastos por Finca</button>
       <button @click="goTo('/tareas/lista')">Ver tareas</button>
-      <button v-if="usuarioActual?.rol !== 'trabajador'" @click="goTo('/documentos/generar')">Generar informe</button>
+      <button @click="goTo('/documentos/generar')">Generar informe</button>
     </div>
   </div>
 </template>
@@ -60,24 +60,7 @@ const dineroGastado = ref(0)
 const fetchDashboardData = async () => {
   const token = localStorage.getItem('token')
   const headers = { Authorization: `Bearer ${token}` }
-  const usuarioActual = ref(null)
 
-  const fetchUsuarioActual = async () => {
-    const token = localStorage.getItem('token')
-    if (!token) return
-
-    try {
-      const res = await fetch(`${baseURL}/api/usuarios/me`, {
-        headers: { Authorization: `Bearer ${token}` }
-      })
-      if (!res.ok) throw new Error('Token inválido')
-
-      usuarioActual.value = await res.json()
-    } catch (e) {
-      console.error('Error al obtener usuarioActual:', e)
-      usuarioActual.value = null
-    }
-  }
   try {
     const countRes = await fetch(`${baseURL}/api/fincas/count`, { headers })
     const countData = await countRes.json()
@@ -119,10 +102,7 @@ function goTo(path) {
   router.push(path)
 }
 
-onMounted(() => {
-  fetchUsuarioActual()
-  fetchDashboardData()
-})
+onMounted(fetchDashboardData)
 </script>
 
 <style scoped>
@@ -168,7 +148,7 @@ onMounted(() => {
   margin-top: 20px;
 }
 
-.mapa-interactivo {
+.mapa-interactivo{
   max-height: 500px;
 }
 
