@@ -6,7 +6,7 @@
       <div class="card">Tareas pendientes: {{ tareasPendientes }}</div>
     </div>
 
-    <div class="row">
+    <div v-if="usuarioActual?.rol !== 'trabajador'" class="row">
       <div class="card large">
         <p>Reparto de gastos</p>
         <EarningsChart :ganado="dineroGanado" :gastado="dineroGastado" />
@@ -32,10 +32,10 @@
     </div>
 
     <div class="button-row">
-      <button @click="goTo('/fincas/mapa')">+ Ver mapa</button>
-      <button @click="goTo('/finanzas/resumen')">Gastos por Finca</button>
+      <button v-if="usuarioActual?.rol !== 'trabajador'" @click="goTo('/fincas/mapa')">+ Ver mapa</button>
+      <button v-if="usuarioActual?.rol !== 'trabajador'" @click="goTo('/finanzas/resumen')">Gastos por Finca</button>
       <button @click="goTo('/tareas/lista')">Ver tareas</button>
-      <button @click="goTo('/documentos/generar')">Generar informe</button>
+      <button  v-if="usuarioActual?.rol !== 'trabajador'"@click="goTo('/documentos/generar')">Generar informe</button>
     </div>
   </div>
 </template>
