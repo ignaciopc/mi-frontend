@@ -35,7 +35,7 @@
       <button v-if="usuarioActual?.rol !== 'trabajador'" @click="goTo('/fincas/mapa')">+ Ver mapa</button>
       <button v-if="usuarioActual?.rol !== 'trabajador'" @click="goTo('/finanzas/resumen')">Gastos por Finca</button>
       <button @click="goTo('/tareas/lista')">Ver tareas</button>
-      <button  v-if="usuarioActual?.rol !== 'trabajador'"@click="goTo('/documentos/generar')">Generar informe</button>
+      <button v-if="usuarioActual?.rol !== 'trabajador'" @click="goTo('/documentos/generar')">Generar informe</button>
     </div>
   </div>
 </template>
@@ -60,7 +60,24 @@ const dineroGastado = ref(0)
 const fetchDashboardData = async () => {
   const token = localStorage.getItem('token')
   const headers = { Authorization: `Bearer ${token}` }
+  const usuarioActual = ref(null)
 
+  const fetchUsuarioActual = async () => {
+    const token = localStorage.getItem('token')
+    if (!token) return
+
+    try {
+      const res = await fetch(`${baseURL}/api/usuarios/me`, {
+        headers: { Authorization: `Bearer ${token}` }
+      })
+      if (!res.ok) throw new Error('Token inválido')
+
+      usuarioActual.value = await res.json()
+    } catch (e) {
+      console.error('Error al obtener usuarioActual:', e)
+      usuarioActual.value = null
+    }
+  }
   try {
     const countRes = await fetch(`${baseURL}/api/fincas/count`, { headers })
     const countData = await countRes.json()
@@ -102,7 +119,10 @@ function goTo(path) {
   router.push(path)
 }
 
-onMounted(fetchDashboardData)
+onMounted(() => {
+  fetchUsuarioActual()
+  fetchDashboardData()
+})
 </script>
 
 <style scoped>
@@ -148,7 +168,7 @@ onMounted(fetchDashboardData)
   margin-top: 20px;
 }
 
-.mapa-interactivo{
+.mapa-interactivo {
   max-height: 500px;
 }
 
