@@ -12,8 +12,14 @@
 
       <!-- Enlaces -->
       <div class="d-flex justify-content-center gap-3 small">
-        <a href="mailto:ignaciopalomarchacon@gmail.com" class="text-muted text-decoration-none">Contacto</a>
-        <a href="https://github.com/ignaciopc" target="_blank" class="text-muted text-decoration-none">GitHub</a>
+<a
+  href="https://mail.google.com/mail/?view=cm&fs=1&to=ignaciopalomarchacon@gmail.com&su=Consulta%20sobre%20la%20app&body=Hola%20Ignacio,%0Aquiero%20hacer%20una%20consulta..."
+  target="_blank"
+  rel="noopener noreferrer"
+  class="text-muted text-decoration-none"
+>
+  Contacto
+</a>        <a href="https://github.com/ignaciopc" target="_blank" class="text-muted text-decoration-none">GitHub</a>
       </div>
     </div>
   </footer>
