@@ -2,7 +2,7 @@
   <div class="dashboard container">
     <div class="row">
       <div class="card">Total de fincas: {{ totalFincas }}</div>
-      <div class="card">Rendimiento esperada: {{ formatCurrency(produccionEsperada) }}</div>
+      <div class="card">Rendimiento esperado: {{ formatCurrency(produccionEsperada) }}</div>
       <div class="card">Tareas pendientes: {{ tareasPendientes }}</div>
     </div>
 
